@@ -4,9 +4,9 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 const loadingTexts = [
-  "Analyzing biological age...",
-  "Optimizing health protocols...",
-  "Preparing your personalized blueprint...",
+  "Calibrating cellular regeneration...",
+  "Decoding longevity pathways...",
+  "Finalizing your hyper-personalized wellness plan...",
 ];
 
 export function Loader() {

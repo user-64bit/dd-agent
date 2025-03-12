@@ -11,7 +11,7 @@ import { VoiceInput } from "@/components/voice-input";
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
-  const [activeSection, setActiveSection] = useState("chat");
+  const [activeSection, setActiveSection] = useState("blueprint");
 
   useEffect(() => {
     // Simulate loading time

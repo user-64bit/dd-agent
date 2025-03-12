@@ -13,12 +13,39 @@ type FormStep = "personal" | "lifestyle" | "goals" | "results";
 export function Blueprint() {
   const [step, setStep] = useState<FormStep>("personal");
   const [formData, setFormData] = useState({
+    // Personal Details
     age: "",
     weight: "",
     height: "",
+    biologicalSex: "",
+    medicalConditions: [] as string[],
+    bodyFatPercentage: "",
+    restingHeartRate: "",
+    bloodPressure: "",
+    medications: "",
+
+    // Lifestyle
     sleepHours: 7,
-    exerciseHours: 3,
+    sleepQuality: "Average",
+    sleepConsistency: "Somewhat Regular",
     stressLevel: 5,
+    stressManagement: [] as string[],
+    exerciseHours: 3,
+    exerciseTypes: [] as string[],
+    activityLevel: "Moderately Active",
+    screenTime: 4,
+    caffeineIntake: "Moderate",
+    alcoholConsumption: "Occasional",
+    smokingHabit: "None",
+
+    // Goals
+    primaryGoal: "",
+    timeframe: "Long-Term",
+    dietaryPreferences: [] as string[],
+    foodSensitivities: "",
+    intermittentFasting: false,
+    mentalGoals: [] as string[],
+    longevityFocus: "Committed",
     goals: [] as string[],
   });
 
@@ -136,7 +163,7 @@ export function Blueprint() {
               <TabsContent value="personal" className="mt-0">
                 <PersonalInfoCard
                   formData={formData}
-                  handleInputChange={handleInputChange}
+                  setFormData={setFormData}
                   handleNext={handleNext}
                 />
               </TabsContent>
@@ -155,6 +182,7 @@ export function Blueprint() {
                 <LifestyleCard
                   formData={formData}
                   handleSliderChange={handleSliderChange}
+                  setFormData={setFormData}
                   handleNext={handleNext}
                   handleBack={handleBack}
                 />
@@ -174,6 +202,7 @@ export function Blueprint() {
                 <HealthGoalsCard
                   formData={formData}
                   handleGoalToggle={handleGoalToggle}
+                  setFormData={setFormData}
                   handleNext={handleNext}
                   handleBack={handleBack}
                 />
