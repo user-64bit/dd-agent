@@ -86,7 +86,7 @@ export function ChatInterface() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-10rem)] max-w-3xl mx-auto">
+    <div className="flex flex-col h-[calc(100vh-10rem)] mx-auto">
       <Card className="flex-1 overflow-hidden flex flex-col bg-background/50 backdrop-blur-sm border-primary/10">
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           <AnimatePresence initial={false}>
@@ -97,13 +97,13 @@ export function ChatInterface() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
                 className={cn(
-                  "flex items-start gap-3 max-w-[85%]",
-                  message.role === "user" ? "ml-auto" : ""
+                  "flex gap-3 max-w-[85%]",
+                  message.role === "user" ? "ml-auto justify-end" : ""
                 )}
               >
                 <Avatar
                   className={cn(
-                    "w-8 h-8",
+                    "w-8 h-8 p-2 border border-white/20",
                     message.role === "user" ? "order-2" : ""
                   )}
                 >
@@ -147,7 +147,7 @@ export function ChatInterface() {
                     {[0, 1, 2].map((i) => (
                       <motion.div
                         key={i}
-                        className="w-2 h-2 rounded-full bg-foreground/50"
+                        className="w-1.5 h-1.5 rounded-full bg-foreground/50"
                         animate={{ y: [0, -5, 0] }}
                         transition={{
                           duration: 0.6,

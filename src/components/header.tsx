@@ -38,7 +38,7 @@ export function Header({ activeSection, setActiveSection }: HeaderProps) {
           <Button
             variant={activeSection === "chat" ? "default" : "ghost"}
             onClick={() => setActiveSection("chat")}
-            className="relative group"
+            className="relative group cursor-pointer"
           >
             <MessageSquare className="w-4 h-4 mr-2" />
             Chat Assistant
@@ -54,7 +54,7 @@ export function Header({ activeSection, setActiveSection }: HeaderProps) {
           <Button
             variant={activeSection === "blueprint" ? "default" : "ghost"}
             onClick={() => setActiveSection("blueprint")}
-            className="relative group"
+            className="relative group cursor-pointer"
           >
             <Activity className="w-4 h-4 mr-2" />
             Blueprint

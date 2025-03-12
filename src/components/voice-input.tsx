@@ -15,14 +15,12 @@ export function VoiceInput() {
     setIsListening(!isListening);
 
     if (!isListening) {
-      // Start pulsing animation when listening starts
       setPulseAnimation(true);
 
-      // Simulate stopping after 5 seconds
       setTimeout(() => {
         setIsListening(false);
         setPulseAnimation(false);
-      }, 5000);
+      }, 2000);
     } else {
       setPulseAnimation(false);
     }
@@ -51,7 +49,7 @@ export function VoiceInput() {
           variant={isListening ? "default" : "outline"}
           size="icon"
           onClick={toggleListening}
-          className={`rounded-full ${
+          className={`rounded-full cursor-pointer ${
             isListening ? "bg-primary" : "bg-background/80 backdrop-blur-sm"
           }`}
         >

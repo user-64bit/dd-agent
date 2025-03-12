@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader } from "@/components/loader";
 import { ChatInterface } from "@/components/chat-interface";
-import { Blueprint } from "@/components/blueprint";
+import { Blueprint } from "@/components/blueprint-cards/blueprint";
 import { Header } from "@/components/header";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { VoiceInput } from "@/components/voice-input";

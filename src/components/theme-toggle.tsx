@@ -39,7 +39,7 @@ export function ThemeToggle() {
         variant="outline"
         size="icon"
         onClick={toggleTheme}
-        className="rounded-full bg-background/80 backdrop-blur-sm"
+        className="rounded-full bg-background/80 backdrop-blur-sm cursor-pointer"
       >
         <motion.div
           animate={{ rotate: isDarkMode ? 0 : 180 }}
