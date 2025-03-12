@@ -1,3 +1,4 @@
+import { formDataInterface } from "@/utils/types";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import BlueprintCommonCard from "./blueprint-common-card";
@@ -7,7 +8,7 @@ export default function PersonalInfoCard({
   handleInputChange,
   handleNext,
 }: {
-  formData: any;
+  formData: formDataInterface;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleNext: () => void;
 }) {

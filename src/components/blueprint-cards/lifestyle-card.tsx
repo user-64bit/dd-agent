@@ -1,3 +1,4 @@
+import { formDataInterface } from "@/utils/types";
 import { Label } from "../ui/label";
 import { Slider } from "../ui/slider";
 import BlueprintCommonCard from "./blueprint-common-card";
@@ -8,7 +9,7 @@ export default function LifestyleCard({
   handleNext,
   handleBack,
 }: {
-  formData: any;
+  formData: formDataInterface;
   handleSliderChange: (name: string, value: number[]) => void;
   handleNext: () => void;
   handleBack: () => void;

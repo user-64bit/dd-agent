@@ -3,6 +3,7 @@ import { Brain, Download, Dumbbell, LucideIcon, Salad } from "lucide-react";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import BlueprintCommonCard from "./blueprint-common-card";
+import { formDataInterface } from "@/utils/types";
 
 export default function BlueprintResultCard({
   isGenerating,
@@ -12,7 +13,7 @@ export default function BlueprintResultCard({
 }: {
   isGenerating: boolean;
   showResults: boolean;
-  formData: any;
+  formData: formDataInterface;
   handleBack: () => void;
 }) {
   return (
@@ -166,7 +167,7 @@ const RecommendationsCard = ({
   formData,
 }: {
   title: string;
-  formData: any;
+  formData: formDataInterface;
 }) => {
   return (
     <Card className="border-primary/20">

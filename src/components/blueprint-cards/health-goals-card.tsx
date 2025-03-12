@@ -1,6 +1,7 @@
 import { Activity, Brain, Check, Dumbbell, Heart, Salad } from "lucide-react";
 import { Button } from "../ui/button";
 import BlueprintCommonCard from "./blueprint-common-card";
+import { formDataInterface } from "@/utils/types";
 
 const GOALS = [
   {
@@ -28,7 +29,7 @@ export default function HealthGoalsCard({
   handleNext,
   handleBack,
 }: {
-  formData: any;
+  formData: formDataInterface;
   handleGoalToggle: (goal: string) => void;
   handleNext: () => void;
   handleBack: () => void;
