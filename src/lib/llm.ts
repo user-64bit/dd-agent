@@ -26,8 +26,9 @@ export async function GPTResponse(chatHistory: Message[], prompt: string) {
 
     const data = await response.json();
     return data.content;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error generating response:", error);
-    return `I'm sorry, I encountered an error processing your request: ${error.message || "Unknown error"}. Please try again later.`;
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    return `I'm sorry, I encountered an error processing your request: ${errorMessage}. Please try again later.`;
   }
 }
