@@ -2,11 +2,13 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BlueprintResultCard from "./blueprint-result-card";
 import HealthGoalsCard from "./health-goals-card";
 import LifestyleCard from "./lifestyle-card";
 import PersonalInfoCard from "./personal-info-card";
+import { GPTResponse } from "@/lib/llm";
+import { BLUEPRINT_PROMPT } from "@/utils/config";
 
 type FormStep = "personal" | "lifestyle" | "goals" | "results";
 
@@ -52,11 +54,12 @@ export function Blueprint() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [showResults, setShowResults] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
+  useEffect(() => {
+    const formData = localStorage.getItem("formData");
+    if (formData) {
+      setFormData(JSON.parse(formData));
+    }
+  }, []);
   const handleSliderChange = (name: string, value: number[]) => {
     setFormData((prev) => ({ ...prev, [name]: value[0] }));
   };
@@ -72,16 +75,31 @@ export function Blueprint() {
     });
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
+    localStorage.setItem("formData", JSON.stringify(formData));
     if (step === "personal") setStep("lifestyle");
     else if (step === "lifestyle") setStep("goals");
     else if (step === "goals") {
       setStep("results");
       setIsGenerating(true);
-      setTimeout(() => {
-        setIsGenerating(false);
-        setShowResults(true);
-      }, 3000);
+      try {
+        const response = await GPTResponse(
+          [{ role: "user", content: JSON.stringify(formData) }],
+          BLUEPRINT_PROMPT
+        );
+        if (response) {
+          const cleanedResponse = response.replace(/```json|```/g, "");
+          const parsedResponse = JSON.parse(cleanedResponse);
+          localStorage.setItem("blueprintResponse", JSON.stringify(parsedResponse));
+        } else {
+          console.error("Received undefined response from GPT API");
+        }
+      } catch (error) {
+        console.error("Error fetching blueprint response:", error);
+        localStorage.setItem("blueprintResponse", JSON.stringify({ error: "Failed to fetch data" }));
+      }
+      setIsGenerating(false);
+      setShowResults(true);
     }
   };
 

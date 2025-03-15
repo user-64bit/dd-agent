@@ -16,6 +16,17 @@ export default function BlueprintResultCard({
   formData: formDataInterface;
   handleBack: () => void;
 }) {
+  const blueprintResponse = localStorage.getItem("blueprintResponse");
+  const blueprintResponseParsed = JSON.parse(blueprintResponse ?? "{}");
+  if (blueprintResponseParsed.error) {
+    console.error("Blueprint response error:", blueprintResponseParsed.error);
+  }
+  const {
+    sleep_optimization,
+    exercise_protocol,
+    nutrition_plan,
+    personal_recommendations,
+  } = blueprintResponseParsed;
   return (
     <div>
       {isGenerating ? (
@@ -105,29 +116,24 @@ export default function BlueprintResultCard({
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <HelperCard
                     title="Sleep Optimization"
-                    description={`Aim for ${
-                      formData.sleepHours + 0.5
-                    } hours of quality sleep. Create a cool, dark environment and establish a consistent sleep schedule.`}
+                    description={sleep_optimization}
                     Icon={Brain}
                   />
                   <HelperCard
                     title="Exercise Protocol"
-                    description={`Increase to ${Math.min(
-                      formData.exerciseHours + 2,
-                      14
-                    )} hours weekly with a mix of resistance training and zone 2 cardio for optimal results.`}
+                    description={exercise_protocol}
                     Icon={Dumbbell}
                   />
 
                   <HelperCard
                     title="Nutrition Plan"
-                    description={`Focus on plant-forward meals with adequate protein (1.6g/kg) and time-restricted eating (8-hour window).`}
+                    description={nutrition_plan}
                     Icon={Salad}
                   />
                 </div>
                 <RecommendationsCard
                   title="Personal Recommendations"
-                  formData={formData}
+                  personal_recommendations={personal_recommendations}
                 />
               </BlueprintCommonCard>
             </motion.div>
@@ -164,10 +170,11 @@ const HelperCard = ({
 
 const RecommendationsCard = ({
   title,
-  formData,
+  personal_recommendations,
 }: {
   title: string;
-  formData: formDataInterface;
+  personal_recommendations: any
+  ;
 }) => {
   return (
     <Card className="border-primary/20">
@@ -177,62 +184,9 @@ const RecommendationsCard = ({
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <h4 className="font-medium">Based on your goals:</h4>
-          <ul className="list-disc pl-5 space-y-1 text-sm">
-            {formData.goals.includes("energy") && (
-              <li>
-                Incorporate morning sunlight exposure for 10-15 minutes to
-                regulate circadian rhythm and boost energy.
-              </li>
-            )}
-            {formData.goals.includes("sleep") && (
-              <li>
-                Implement a digital sunset 1 hour before bed and consider
-                magnesium glycinate supplementation.
-              </li>
-            )}
-            {formData.goals.includes("heart") && (
-              <li>
-                Add 2-3 sessions of zone 2 cardio (120-140 bpm) per week for
-                cardiovascular health.
-              </li>
-            )}
-            {formData.goals.includes("muscle") && (
-              <li>
-                Focus on progressive overload resistance training 3x weekly with
-                adequate protein intake.
-              </li>
-            )}
-            {formData.goals.includes("weight") && (
-              <li>
-                Implement time-restricted eating with an 8-hour feeding window
-                to support metabolic health.
-              </li>
-            )}
-            {formData.goals.includes("nutrition") && (
-              <li>
-                Prioritize a diverse range of plant foods (30+ varieties weekly)
-                for microbiome health.
-              </li>
-            )}
-            {formData.goals.length === 0 && (
-              <li>
-                Focus on foundational habits: quality sleep, regular movement,
-                and nutrient-dense foods.
-              </li>
-            )}
-          </ul>
+          {personal_recommendations}
         </div>
 
-        <div className="space-y-2">
-          <h4 className="font-medium">Stress Management:</h4>
-          <p className="text-sm">
-            {formData.stressLevel > 7
-              ? "Your stress levels are high. Implement daily meditation, breathwork, and consider adaptogens like Ashwagandha."
-              : formData.stressLevel > 4
-              ? "Moderate stress detected. Add 10-minute daily meditation and regular nature exposure."
-              : "Your stress levels are well-managed. Maintain current practices and consider adding regular cold exposure."}
-          </p>
-        </div>
       </CardContent>
     </Card>
   );
