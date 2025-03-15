@@ -30,10 +30,10 @@ You can respond in one of two formats:
 1. **JSON Format with Markdown Content**:
 \`\`\`json
 {
-  "sleep_optimization": "## 💤 Sleep Optimization\\n\\n(150-200 words on improving sleep based on user's habits, with markdown formatting)",
-  "exercise_protocol": "## 🏋️ Exercise Protocol\\n\\n(150-200 words on an exercise routine with markdown formatting)",
-  "nutrition_plan": "## 🍎 Nutrition Plan\\n\\n(150-200 words on optimal diet with markdown formatting)",
-  "personal_recommendations": "## 🔬 Personal Recommendations\\n\\n(Detailed longevity insights with markdown formatting, more than 500 words)"
+  "sleep_optimization": "\\n(150-200 words on improving sleep based on user's habits, with markdown formatting)",
+  "exercise_protocol": "\\n(150-200 words on an exercise routine with markdown formatting)",
+  "nutrition_plan": "\\n(150-200 words on optimal diet with markdown formatting)",
+  "personal_recommendations": "\\n(Detailed longevity insights with markdown formatting, more than 500 words)"
 }
 \`\`\`
 

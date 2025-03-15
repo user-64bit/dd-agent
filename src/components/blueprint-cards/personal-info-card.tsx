@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import BlueprintCommonCard from "./blueprint-common-card";
+import { AlertCircle } from "lucide-react";
 
 export default function PersonalInfoCard({
   formData,
@@ -15,18 +16,58 @@ export default function PersonalInfoCard({
   handleNext: () => void;
 }) {
   const [showOptionalPersonal, setShowOptionalPersonal] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  
+  // Check if all required fields are filled
+  const isFormValid = () => {
+    const newErrors: Record<string, string> = {};
+    
+    if (!formData.age) {
+      newErrors.age = "Age is required";
+    } else if (parseInt(formData.age) < 18 || parseInt(formData.age) > 120) {
+      newErrors.age = "Age must be between 18 and 120";
+    }
+    
+    if (!formData.biologicalSex) {
+      newErrors.biologicalSex = "Biological sex is required";
+    }
+    
+    if (!formData.height) {
+      newErrors.height = "Height is required";
+    } else if (parseInt(formData.height) < 100 || parseInt(formData.height) > 250) {
+      newErrors.height = "Height must be between 100 and 250 cm";
+    }
+    
+    if (!formData.weight) {
+      newErrors.weight = "Weight is required";
+    } else if (parseInt(formData.weight) < 30 || parseInt(formData.weight) > 300) {
+      newErrors.weight = "Weight must be between 30 and 300 kg";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+  
+  const handleNextWithValidation = () => {
+    if (isFormValid()) {
+      handleNext();
+    }
+  };
+
   return (
     <BlueprintCommonCard
       cardTitle="Personal Information"
       cardDescription="Enter your basic information to get started with your
         personalized longevity blueprint."
-      handleNext={handleNext}
+      handleNext={handleNextWithValidation}
     >
       <div>
         <h3 className="text-lg font-medium mb-2">Essential Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="age">Age</Label>
+            <Label htmlFor="age" className="flex items-center">
+              Age <span className="text-red-500 ml-1">*</span>
+            </Label>
             <Input
               id="age"
               name="age"
@@ -36,10 +77,20 @@ export default function PersonalInfoCard({
               onChange={(e) =>
                 setFormData({ ...formData, age: e.target.value })
               }
+              className={errors.age ? "border-red-500" : ""}
+              required
             />
+            {errors.age && (
+              <div className="text-red-500 text-xs flex items-center mt-1">
+                <AlertCircle className="h-3 w-3 mr-1" />
+                {errors.age}
+              </div>
+            )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="biologicalSex">Biological Sex</Label>
+            <Label htmlFor="biologicalSex" className="flex items-center">
+              Biological Sex <span className="text-red-500 ml-1">*</span>
+            </Label>
             <div className="flex space-x-4 pt-2">
               {["Male", "Female", "Other"].map((option) => (
                 <div key={option} className="flex items-center space-x-2">
@@ -56,6 +107,7 @@ export default function PersonalInfoCard({
                       })
                     }
                     className="h-4 w-4 text-primary"
+                    required
                   />
                   <Label
                     htmlFor={`sex-${option.toLowerCase()}`}
@@ -66,9 +118,17 @@ export default function PersonalInfoCard({
                 </div>
               ))}
             </div>
+            {errors.biologicalSex && (
+              <div className="text-red-500 text-xs flex items-center mt-1">
+                <AlertCircle className="h-3 w-3 mr-1" />
+                {errors.biologicalSex}
+              </div>
+            )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="height">Height (cm)</Label>
+            <Label htmlFor="height" className="flex items-center">
+              Height (cm) <span className="text-red-500 ml-1">*</span>
+            </Label>
             <Input
               id="height"
               name="height"
@@ -78,10 +138,20 @@ export default function PersonalInfoCard({
               onChange={(e) =>
                 setFormData({ ...formData, height: e.target.value })
               }
+              className={errors.height ? "border-red-500" : ""}
+              required
             />
+            {errors.height && (
+              <div className="text-red-500 text-xs flex items-center mt-1">
+                <AlertCircle className="h-3 w-3 mr-1" />
+                {errors.height}
+              </div>
+            )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="weight">Weight (kg)</Label>
+            <Label htmlFor="weight" className="flex items-center">
+              Weight (kg) <span className="text-red-500 ml-1">*</span>
+            </Label>
             <Input
               id="weight"
               name="weight"
@@ -91,7 +161,15 @@ export default function PersonalInfoCard({
               onChange={(e) =>
                 setFormData({ ...formData, weight: e.target.value })
               }
+              className={errors.weight ? "border-red-500" : ""}
+              required
             />
+            {errors.weight && (
+              <div className="text-red-500 text-xs flex items-center mt-1">
+                <AlertCircle className="h-3 w-3 mr-1" />
+                {errors.weight}
+              </div>
+            )}
           </div>
           <div className="space-y-2 md:col-span-2">
             <Label htmlFor="medicalConditions">
@@ -213,6 +291,10 @@ export default function PersonalInfoCard({
             </div>
           </div>
         )}
+      </div>
+      
+      <div className="text-sm text-muted-foreground mt-4">
+        <p>Fields marked with <span className="text-red-500">*</span> are required.</p>
       </div>
     </BlueprintCommonCard>
   );

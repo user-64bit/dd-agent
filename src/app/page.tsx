@@ -22,6 +22,27 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Check if user data exists in localStorage and set active section accordingly
+  useEffect(() => {
+    try {
+      const formDataString = localStorage.getItem("formData");
+      if (formDataString) {
+        const userData = JSON.parse(formDataString);
+        // Check if we have at least the required user data
+        if (userData.age && userData.biologicalSex && userData.height && userData.weight) {
+          setActiveSection("chat");
+        } else {
+          setActiveSection("blueprint");
+        }
+      } else {
+        setActiveSection("blueprint");
+      }
+    } catch (error) {
+      console.error("Error checking user data:", error);
+      setActiveSection("blueprint");
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <AnimatePresence>

@@ -1,23 +1,25 @@
-import { AnimatePresence, motion } from "framer-motion";
-import { Brain, Download, Dumbbell, LucideIcon, Salad } from "lucide-react";
-import { Button } from "../ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import BlueprintCommonCard from "./blueprint-common-card";
 import { formDataInterface } from "@/utils/types";
+import { AnimatePresence, motion } from "framer-motion";
+import { Download } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { Button } from "../ui/button";
+import { Card, CardContent } from "../ui/card";
+import BlueprintCommonCard from "./blueprint-common-card";
 
 export default function BlueprintResultCard({
   isGenerating,
   showResults,
   formData,
   handleBack,
-  setActiveSection
+  setActiveSection,
 }: {
   isGenerating: boolean;
   showResults: boolean;
   formData: formDataInterface;
   handleBack: () => void;
-  setActiveSection: Dispatch<SetStateAction<string>>
+  setActiveSection: Dispatch<SetStateAction<string>>;
 }) {
   const blueprintResponse = localStorage.getItem("blueprintResponse");
   const blueprintResponseParsed = JSON.parse(blueprintResponse ?? "{}");
@@ -111,31 +113,21 @@ export default function BlueprintResultCard({
                   </Button>
                 }
                 TalkToAIButton={
-                  <Button className="cursor-pointer" onClick={() => setActiveSection("chat")}>
+                  <Button
+                    className="cursor-pointer"
+                    onClick={() => setActiveSection("chat")}
+                  >
                     Talk to AI Assistant
                   </Button>
                 }
               >
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <HelperCard
-                    title="Sleep Optimization"
-                    description={sleep_optimization}
-                    Icon={Brain}
-                  />
-                  <HelperCard
-                    title="Exercise Protocol"
-                    description={exercise_protocol}
-                    Icon={Dumbbell}
-                  />
+                  <HelperCard description={sleep_optimization} />
+                  <HelperCard description={exercise_protocol} />
 
-                  <HelperCard
-                    title="Nutrition Plan"
-                    description={nutrition_plan}
-                    Icon={Salad}
-                  />
+                  <HelperCard description={nutrition_plan} />
                 </div>
                 <RecommendationsCard
-                  title="Personal Recommendations"
                   personal_recommendations={personal_recommendations}
                 />
               </BlueprintCommonCard>
@@ -147,49 +139,36 @@ export default function BlueprintResultCard({
   );
 }
 
-const HelperCard = ({
-  title,
-  description,
-  Icon,
-}: {
-  title: string;
-  description: string;
-  Icon: LucideIcon;
-}) => {
+const HelperCard = ({ description }: { description: string }) => {
   return (
     <Card className="bg-primary/5 border-primary/20">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg flex items-center">
-          <Icon className="mr-2 h-5 w-5 text-primary" />
-          {title}
-        </CardTitle>
-      </CardHeader>
       <CardContent>
-        <p className="text-sm">{description}</p>
+        <div className="markdown-content">
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {description}
+          </ReactMarkdown>
+        </div>
       </CardContent>
     </Card>
   );
 };
 
 const RecommendationsCard = ({
-  title,
   personal_recommendations,
 }: {
-  title: string;
-  personal_recommendations: any
-  ;
+  personal_recommendations: any;
 }) => {
   return (
     <Card className="border-primary/20">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg">{title}</CardTitle>
-      </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <h4 className="font-medium">Based on your goals:</h4>
-          {personal_recommendations}
+          <div className="markdown-content">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {personal_recommendations}
+            </ReactMarkdown>
+          </div>
         </div>
-
       </CardContent>
     </Card>
   );
