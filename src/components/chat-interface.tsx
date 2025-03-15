@@ -13,6 +13,8 @@ import { cn } from "@/lib/utils";
 import { Message } from "@/utils/types";
 import { GPTResponse } from "@/lib/llm";
 import { SYSTEM_PROMPT } from "@/utils/config";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const initialMessages: Message[] = [
   {
@@ -110,6 +112,56 @@ export function ChatInterface() {
     }
   };
 
+  // Custom component for rendering message content
+  const MessageContent = ({ content, isAI }: { content: string; isAI: boolean }) => {
+    if (isAI) {
+      return (
+        <div className="markdown-content">
+          <ReactMarkdown 
+            remarkPlugins={[remarkGfm]}
+            components={{
+              h1: ({ children }) => <h1 className="text-xl font-bold my-3">{children}</h1>,
+              h2: ({ children }) => <h2 className="text-lg font-bold my-2">{children}</h2>,
+              h3: ({ children }) => <h3 className="text-md font-bold my-2">{children}</h3>,
+              p: ({ children }) => <p className="my-2">{children}</p>,
+              ul: ({ children }) => <ul className="list-disc pl-5 my-2">{children}</ul>,
+              ol: ({ children }) => <ol className="list-decimal pl-5 my-2">{children}</ol>,
+              li: ({ children }) => <li className="my-1">{children}</li>,
+              a: ({ href, children }) => <a href={href} className="text-primary underline">{children}</a>,
+              blockquote: ({ children }) => <blockquote className="border-l-4 border-primary/30 pl-4 italic my-2">{children}</blockquote>,
+              code: (props) => {
+                const { children, className, node, ...rest } = props;
+                const match = /language-(\w+)/.exec(className || '');
+                const isInline = !className;
+                
+                if (isInline) {
+                  return <code className="bg-muted px-1 py-0.5 rounded text-sm">{children}</code>;
+                }
+                
+                return (
+                  <pre className="bg-muted p-3 rounded-md overflow-x-auto my-2 text-sm">
+                    <code className={match ? `language-${match[1]}` : ''}>{children}</code>
+                  </pre>
+                );
+              },
+              strong: ({ children }) => <strong className="font-bold">{children}</strong>,
+              em: ({ children }) => <em className="italic">{children}</em>,
+              table: ({ children }) => <div className="overflow-x-auto my-2"><table className="min-w-full border-collapse">{children}</table></div>,
+              thead: ({ children }) => <thead className="bg-muted/50">{children}</thead>,
+              tbody: ({ children }) => <tbody>{children}</tbody>,
+              tr: ({ children }) => <tr className="border-b border-muted">{children}</tr>,
+              th: ({ children }) => <th className="px-2 py-1 text-left font-medium">{children}</th>,
+              td: ({ children }) => <td className="px-2 py-1">{children}</td>,
+            }}
+          >
+            {content}
+          </ReactMarkdown>
+        </div>
+      );
+    }
+    return <p className="text-sm">{content}</p>;
+  };
+
   return (
     <div className="flex flex-col h-[calc(100vh-10rem)] mx-auto">
       <Card className="flex-1 overflow-hidden flex flex-col bg-background/50 backdrop-blur-sm border-primary/10">
@@ -155,7 +207,10 @@ export function ChatInterface() {
                       : "bg-muted"
                   )}
                 >
-                  <p className="text-sm">{message.content}</p>
+                  <MessageContent 
+                    content={message.content} 
+                    isAI={message.role === "system"} 
+                  />
                   <p className="text-xs opacity-70 mt-1">
                     {message?.timestamp?.toLocaleTimeString([], {
                       hour: "2-digit",
