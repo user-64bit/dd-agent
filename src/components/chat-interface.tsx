@@ -91,9 +91,22 @@ export function ChatInterface() {
         "{Insert user details: Personal metrics, lifestyle habits, health goals}",
         JSON.stringify(userData, null, 2)
       );
+      
+      // Log the user data for debugging
+      console.log("User data for AI:", {
+        smokingHabit: userData.smokingHabit,
+        primaryGoal: userData.primaryGoal,
+        age: userData.age,
+        biologicalSex: userData.biologicalSex
+      });
+    } else {
+      console.log("No user data available");
     }
 
-    const response = await GPTResponse(messages, contextualizedPrompt);
+    // Include the current message in the context
+    const updatedMessages = [...messages, userMessage];
+    
+    const response = await GPTResponse(updatedMessages, contextualizedPrompt);
     const aiMessage: Message = {
       id: Date.now().toString(),
       content: response as string,
