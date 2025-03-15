@@ -9,6 +9,7 @@ import LifestyleCard from "./lifestyle-card";
 import PersonalInfoCard from "./personal-info-card";
 import { GPTResponse } from "@/lib/llm";
 import { BLUEPRINT_PROMPT } from "@/utils/config";
+import { formDataInterface } from "@/utils/types";
 
 type FormStep = "personal" | "lifestyle" | "goals" | "results";
 
@@ -54,12 +55,84 @@ export function Blueprint({setActiveSection}: {setActiveSection: Dispatch<SetSta
   const [isGenerating, setIsGenerating] = useState(false);
   const [showResults, setShowResults] = useState(false);
 
+  // Check if all mandatory fields are filled
+  const checkMandatoryFields = (data: formDataInterface) => {
+    // Check personal info mandatory fields
+    if (!data.age || !data.biologicalSex || !data.height || !data.weight) {
+      return false;
+    }
+    
+    // Check lifestyle mandatory fields
+    if (!data.sleepQuality || !data.sleepConsistency || !data.activityLevel) {
+      return false;
+    }
+    
+    // Check goals mandatory fields
+    if (!data.primaryGoal || data.goals.length === 0) {
+      return false;
+    }
+    
+    return true;
+  };
+
   useEffect(() => {
-    const formData = localStorage.getItem("formData");
-    if (formData) {
-      setFormData(JSON.parse(formData));
+    const storedFormData = localStorage.getItem("formData");
+    if (storedFormData) {
+      const parsedData = JSON.parse(storedFormData);
+      setFormData(parsedData);
+      
+      // Check if all mandatory fields are filled and set the appropriate step
+      if (checkMandatoryFields(parsedData)) {
+        setStep("results");
+        
+        // Check if blueprint response exists
+        const blueprintResponse = localStorage.getItem("blueprintResponse");
+        if (blueprintResponse) {
+          setShowResults(true);
+        } else {
+          // Generate blueprint if it doesn't exist
+          generateBlueprint(parsedData);
+        }
+      }
     }
   }, []);
+  
+  const generateBlueprint = async (data: formDataInterface) => {
+    setIsGenerating(true);
+    try {
+      const response = await GPTResponse(
+        [{ role: "user", content: JSON.stringify(data) }],
+        BLUEPRINT_PROMPT
+      );
+      if (response) {
+        try {
+          // Try to parse as JSON first (handling cases where response is wrapped in ```json blocks)
+          const cleanedResponse = response.replace(/```json|```/g, "");
+          const parsedResponse = JSON.parse(cleanedResponse);
+          localStorage.setItem("blueprintResponse", JSON.stringify(parsedResponse));
+        } catch (parseError) {
+          // If JSON parsing fails, treat it as markdown content
+          console.log("Response is not in JSON format, treating as markdown");
+          // Create a structured object with markdown content
+          const markdownResponse = {
+            sleep_optimization: "## Sleep Optimization\n\n" + response,
+            exercise_protocol: "",
+            nutrition_plan: "",
+            personal_recommendations: response
+          };
+          localStorage.setItem("blueprintResponse", JSON.stringify(markdownResponse));
+        }
+      } else {
+        console.error("Received undefined response from GPT API");
+      }
+    } catch (error) {
+      console.error("Error fetching blueprint response:", error);
+      localStorage.setItem("blueprintResponse", JSON.stringify({ error: "Failed to fetch data" }));
+    }
+    setIsGenerating(false);
+    setShowResults(true);
+  };
+
   const handleSliderChange = (name: string, value: number[]) => {
     setFormData((prev) => ({ ...prev, [name]: value[0] }));
   };
@@ -88,9 +161,23 @@ export function Blueprint({setActiveSection}: {setActiveSection: Dispatch<SetSta
           BLUEPRINT_PROMPT
         );
         if (response) {
-          const cleanedResponse = response.replace(/```json|```/g, "");
-          const parsedResponse = JSON.parse(cleanedResponse);
-          localStorage.setItem("blueprintResponse", JSON.stringify(parsedResponse));
+          try {
+            // Try to parse as JSON first (handling cases where response is wrapped in ```json blocks)
+            const cleanedResponse = response.replace(/```json|```/g, "");
+            const parsedResponse = JSON.parse(cleanedResponse);
+            localStorage.setItem("blueprintResponse", JSON.stringify(parsedResponse));
+          } catch (parseError) {
+            // If JSON parsing fails, treat it as markdown content
+            console.log("Response is not in JSON format, treating as markdown");
+            // Create a structured object with markdown content
+            const markdownResponse = {
+              sleep_optimization: "## Sleep Optimization\n\n" + response,
+              exercise_protocol: "",
+              nutrition_plan: "",
+              personal_recommendations: response
+            };
+            localStorage.setItem("blueprintResponse", JSON.stringify(markdownResponse));
+          }
         } else {
           console.error("Received undefined response from GPT API");
         }
