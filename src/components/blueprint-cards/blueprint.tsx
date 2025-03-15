@@ -104,34 +104,56 @@ export function Blueprint({setActiveSection}: {setActiveSection: Dispatch<SetSta
         [{ role: "user", content: JSON.stringify(data) }],
         BLUEPRINT_PROMPT
       );
-      if (response) {
-        try {
-          // Try to parse as JSON first (handling cases where response is wrapped in ```json blocks)
-          const cleanedResponse = response.replace(/```json|```/g, "");
-          const parsedResponse = JSON.parse(cleanedResponse);
-          localStorage.setItem("blueprintResponse", JSON.stringify(parsedResponse));
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        } catch (_) {
-          // If JSON parsing fails, treat it as markdown content
-          console.log("Response is not in JSON format, treating as markdown");
-          // Create a structured object with markdown content
-          const markdownResponse = {
-            sleep_optimization: "## Sleep Optimization\n\n" + response,
-            exercise_protocol: "",
-            nutrition_plan: "",
-            personal_recommendations: response
-          };
-          localStorage.setItem("blueprintResponse", JSON.stringify(markdownResponse));
+      
+      if (!response) {
+        throw new Error("Received empty response from API");
+      }
+      
+      try {
+        // Try to parse as JSON first (handling cases where response is wrapped in ```json blocks)
+        const cleanedResponse = response.replace(/```json|```/g, "").trim();
+        
+        // Check if the response already contains an error object
+        const parsedResponse = JSON.parse(cleanedResponse);
+        
+        // If the response contains an error field, log it but still save the response
+        if (parsedResponse.error) {
+          console.error("Error in blueprint response:", parsedResponse.error);
         }
-      } else {
-        console.error("Received undefined response from GPT API");
+        
+        localStorage.setItem("blueprintResponse", JSON.stringify(parsedResponse));
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (parseError) {
+        // If JSON parsing fails, treat it as markdown content
+        console.log("Response is not in JSON format, treating as markdown");
+        // Create a structured object with markdown content
+        const markdownResponse = {
+          sleep_optimization: "## Sleep Optimization\n\n" + response,
+          exercise_protocol: "",
+          nutrition_plan: "",
+          personal_recommendations: response
+        };
+        localStorage.setItem("blueprintResponse", JSON.stringify(markdownResponse));
       }
     } catch (error) {
       console.error("Error fetching blueprint response:", error);
-      localStorage.setItem("blueprintResponse", JSON.stringify({ error: "Failed to fetch data" }));
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      
+      // Create a user-friendly error response
+      const errorResponse = {
+        error: "Failed to generate blueprint",
+        message: errorMessage,
+        sleep_optimization: "## Error\n\nUnable to generate sleep recommendations. Please try again later.",
+        exercise_protocol: "## Error\n\nUnable to generate exercise recommendations. Please try again later.",
+        nutrition_plan: "## Error\n\nUnable to generate nutrition recommendations. Please try again later.",
+        personal_recommendations: `## Error\n\nWe encountered an error while generating your personalized blueprint: ${errorMessage}. Please try again later.`
+      };
+      
+      localStorage.setItem("blueprintResponse", JSON.stringify(errorResponse));
+    } finally {
+      setIsGenerating(false);
+      setShowResults(true);
     }
-    setIsGenerating(false);
-    setShowResults(true);
   };
 
   const handleSliderChange = (name: string, value: number[]) => {
@@ -161,34 +183,56 @@ export function Blueprint({setActiveSection}: {setActiveSection: Dispatch<SetSta
           [{ role: "user", content: JSON.stringify(formData) }],
           BLUEPRINT_PROMPT
         );
-        if (response) {
-          try {
-            // Try to parse as JSON first (handling cases where response is wrapped in ```json blocks)
-            const cleanedResponse = response.replace(/```json|```/g, "");
-            const parsedResponse = JSON.parse(cleanedResponse);
-            localStorage.setItem("blueprintResponse", JSON.stringify(parsedResponse));
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          } catch (_) {
-            // If JSON parsing fails, treat it as markdown content
-            console.log("Response is not in JSON format, treating as markdown");
-            // Create a structured object with markdown content
-            const markdownResponse = {
-              sleep_optimization: "## Sleep Optimization\n\n" + response,
-              exercise_protocol: "",
-              nutrition_plan: "",
-              personal_recommendations: response
-            };
-            localStorage.setItem("blueprintResponse", JSON.stringify(markdownResponse));
+        
+        if (!response) {
+          throw new Error("Received empty response from API");
+        }
+        
+        try {
+          // Try to parse as JSON first (handling cases where response is wrapped in ```json blocks)
+          const cleanedResponse = response.replace(/```json|```/g, "").trim();
+          
+          // Check if the response already contains an error object
+          const parsedResponse = JSON.parse(cleanedResponse);
+          
+          // If the response contains an error field, log it but still save the response
+          if (parsedResponse.error) {
+            console.error("Error in blueprint response:", parsedResponse.error);
           }
-        } else {
-          console.error("Received undefined response from GPT API");
+          
+          localStorage.setItem("blueprintResponse", JSON.stringify(parsedResponse));
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (parseError) {
+          // If JSON parsing fails, treat it as markdown content
+          console.log("Response is not in JSON format, treating as markdown");
+          // Create a structured object with markdown content
+          const markdownResponse = {
+            sleep_optimization: "## Sleep Optimization\n\n" + response,
+            exercise_protocol: "",
+            nutrition_plan: "",
+            personal_recommendations: response
+          };
+          localStorage.setItem("blueprintResponse", JSON.stringify(markdownResponse));
         }
       } catch (error) {
         console.error("Error fetching blueprint response:", error);
-        localStorage.setItem("blueprintResponse", JSON.stringify({ error: "Failed to fetch data" }));
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        
+        // Create a user-friendly error response
+        const errorResponse = {
+          error: "Failed to generate blueprint",
+          message: errorMessage,
+          sleep_optimization: "## Error\n\nUnable to generate sleep recommendations. Please try again later.",
+          exercise_protocol: "## Error\n\nUnable to generate exercise recommendations. Please try again later.",
+          nutrition_plan: "## Error\n\nUnable to generate nutrition recommendations. Please try again later.",
+          personal_recommendations: `## Error\n\nWe encountered an error while generating your personalized blueprint: ${errorMessage}. Please try again later.`
+        };
+        
+        localStorage.setItem("blueprintResponse", JSON.stringify(errorResponse));
+      } finally {
+        setIsGenerating(false);
+        setShowResults(true);
       }
-      setIsGenerating(false);
-      setShowResults(true);
     }
   };
 
