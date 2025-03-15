@@ -10,20 +10,16 @@ import { Input } from "@/components/ui/input";
 import { Avatar } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-
-type Message = {
-  id: string;
-  content: string;
-  role: "user" | "assistant";
-  timestamp: Date;
-};
+import { Message } from "@/utils/types";
+import { GPTResponse } from "@/lib/llm";
+import { SYSTEM_PROMPT } from "@/utils/config";
 
 const initialMessages: Message[] = [
   {
     id: "1",
     content:
       "Hello! I'm your AI health assistant based on the Don't Die Blueprint. How can I help optimize your longevity today?",
-    role: "assistant",
+    role: "system",
     timestamp: new Date(),
   },
 ];
@@ -45,7 +41,6 @@ export function ChatInterface() {
   const handleSend = async () => {
     if (!input.trim()) return;
 
-    // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
       content: input,
@@ -57,25 +52,16 @@ export function ChatInterface() {
     setInput("");
     setIsTyping(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const responses = [
-        "Based on the latest research, optimizing your sleep quality should be a priority for longevity. Aim for 7-8 hours of uninterrupted sleep in a cool, dark room.",
-        "Your nutrition plays a critical role in longevity. Consider incorporating more plant-based foods, especially leafy greens and berries, which are rich in antioxidants.",
-        "Regular exercise, particularly a mix of cardio and resistance training, has been shown to significantly extend healthspan. Even 20-30 minutes daily can make a difference.",
-        "Stress management techniques like meditation or deep breathing exercises can help reduce cortisol levels, which is important for cellular health and longevity.",
-      ];
+    const response = await GPTResponse(messages, SYSTEM_PROMPT);
+    const aiMessage: Message = {
+      id: Date.now().toString(),
+      content: response as string,
+      role: "system",
+      timestamp: new Date(),
+    };
 
-      const aiMessage: Message = {
-        id: Date.now().toString(),
-        content: responses[Math.floor(Math.random() * responses.length)],
-        role: "assistant",
-        timestamp: new Date(),
-      };
-
-      setIsTyping(false);
-      setMessages((prev) => [...prev, aiMessage]);
-    }, 1500);
+    setIsTyping(false);
+    setMessages((prev) => [...prev, aiMessage]);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -124,7 +110,7 @@ export function ChatInterface() {
                 >
                   <p className="text-sm">{message.content}</p>
                   <p className="text-xs opacity-70 mt-1">
-                    {message.timestamp.toLocaleTimeString([], {
+                    {message?.timestamp?.toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",
                     })}

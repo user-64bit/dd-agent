@@ -29,3 +29,10 @@ export interface formDataInterface {
   longevityFocus: string;
   goals: string[];
 }
+
+export interface Message {
+  id?: string;
+  role: "user" | "system";
+  content: string;
+  timestamp?: Date;
+}
