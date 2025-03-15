@@ -64,7 +64,7 @@ export default function Home() {
                     transition={{ duration: 0.3 }}
                     className="h-full"
                   >
-                    <Blueprint />
+                    <Blueprint setActiveSection={setActiveSection}/>
                   </motion.div>
                 )}
               </AnimatePresence>

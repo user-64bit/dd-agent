@@ -2,7 +2,7 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import BlueprintResultCard from "./blueprint-result-card";
 import HealthGoalsCard from "./health-goals-card";
 import LifestyleCard from "./lifestyle-card";
@@ -12,7 +12,7 @@ import { BLUEPRINT_PROMPT } from "@/utils/config";
 
 type FormStep = "personal" | "lifestyle" | "goals" | "results";
 
-export function Blueprint() {
+export function Blueprint({setActiveSection}: {setActiveSection: Dispatch<SetStateAction<string>>}) {
   const [step, setStep] = useState<FormStep>("personal");
   const [formData, setFormData] = useState({
     // Personal Details
@@ -242,6 +242,7 @@ export function Blueprint() {
                   showResults={showResults}
                   formData={formData}
                   handleBack={handleBack}
+                  setActiveSection={setActiveSection}
                 />
               </TabsContent>
             </motion.div>

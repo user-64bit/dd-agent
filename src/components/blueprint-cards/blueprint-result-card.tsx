@@ -4,17 +4,20 @@ import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import BlueprintCommonCard from "./blueprint-common-card";
 import { formDataInterface } from "@/utils/types";
+import { Dispatch, SetStateAction } from "react";
 
 export default function BlueprintResultCard({
   isGenerating,
   showResults,
   formData,
   handleBack,
+  setActiveSection
 }: {
   isGenerating: boolean;
   showResults: boolean;
   formData: formDataInterface;
   handleBack: () => void;
+  setActiveSection: Dispatch<SetStateAction<string>>
 }) {
   const blueprintResponse = localStorage.getItem("blueprintResponse");
   const blueprintResponseParsed = JSON.parse(blueprintResponse ?? "{}");
@@ -108,7 +111,7 @@ export default function BlueprintResultCard({
                   </Button>
                 }
                 TalkToAIButton={
-                  <Button className="cursor-pointer">
+                  <Button className="cursor-pointer" onClick={() => setActiveSection("chat")}>
                     Talk to AI Assistant
                   </Button>
                 }
