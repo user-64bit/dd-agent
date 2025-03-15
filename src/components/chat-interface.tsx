@@ -4,7 +4,7 @@ import type React from "react";
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, User, Bot } from "lucide-react";
+import { Send, User, Bot, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar } from "@/components/ui/avatar";
@@ -18,7 +18,7 @@ const initialMessages: Message[] = [
   {
     id: "1",
     content:
-      "Hello! I'm your AI health assistant based on the Don't Die Blueprint. How can I help optimize your longevity today?",
+      "Hello! I'm your AI health assistant based on the Don't Die Blueprint. I have access to your health profile data and will provide personalized recommendations. How can I help optimize your longevity today?",
     role: "system",
     timestamp: new Date(),
   },
@@ -28,7 +28,24 @@ export function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [hasUserData, setHasUserData] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Check if user data exists in localStorage
+  useEffect(() => {
+    try {
+      const formDataString = localStorage.getItem("formData");
+      if (formDataString) {
+        const userData = JSON.parse(formDataString);
+        // Check if we have at least some basic user data
+        if (userData.age || userData.biologicalSex || userData.weight) {
+          setHasUserData(true);
+        }
+      }
+    } catch (error) {
+      console.error("Error checking user data:", error);
+    }
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -52,7 +69,29 @@ export function ChatInterface() {
     setInput("");
     setIsTyping(true);
 
-    const response = await GPTResponse(messages, SYSTEM_PROMPT);
+    // Retrieve user data from localStorage
+    let userData = null;
+    try {
+      const formDataString = localStorage.getItem("formData");
+      if (formDataString) {
+        userData = JSON.parse(formDataString);
+        setHasUserData(true);
+      }
+    } catch (error) {
+      console.error("Error retrieving user data from localStorage:", error);
+    }
+
+    // Create a modified system prompt that includes user data
+    let contextualizedPrompt = SYSTEM_PROMPT;
+    if (userData) {
+      // Replace the placeholder in the system prompt with actual user data
+      contextualizedPrompt = SYSTEM_PROMPT.replace(
+        "{Insert user details: Personal metrics, lifestyle habits, health goals}",
+        JSON.stringify(userData, null, 2)
+      );
+    }
+
+    const response = await GPTResponse(messages, contextualizedPrompt);
     const aiMessage: Message = {
       id: Date.now().toString(),
       content: response as string,
@@ -74,6 +113,14 @@ export function ChatInterface() {
   return (
     <div className="flex flex-col h-[calc(100vh-10rem)] mx-auto">
       <Card className="flex-1 overflow-hidden flex flex-col bg-background/50 backdrop-blur-sm border-primary/10">
+        {!hasUserData && (
+          <div className="bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-200 p-3 flex items-center gap-2 text-sm">
+            <AlertCircle className="h-4 w-4" />
+            <p>
+              For personalized health recommendations, please complete your profile in the Blueprint section.
+            </p>
+          </div>
+        )}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           <AnimatePresence initial={false}>
             {messages.map((message) => (
@@ -170,6 +217,7 @@ export function ChatInterface() {
           </div>
           <p className="text-xs text-muted-foreground mt-2 text-center">
             AI responses are based on the Don&apos;t Die Blueprint principles
+            {hasUserData && " and your personal health profile"}
           </p>
         </div>
       </Card>
