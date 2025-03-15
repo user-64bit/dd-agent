@@ -67,6 +67,25 @@ To start the production server:
 bun run start
 ```
 
+### Deploying to Vercel
+
+1. Push your code to a GitHub repository
+
+2. Connect your repository to Vercel
+
+3. Configure environment variables in Vercel:
+   - Go to your project settings in Vercel
+   - Navigate to the "Environment Variables" tab
+   - Add `OPENAI_API_KEY` with your OpenAI API key as the value
+   - Deploy or redeploy your application
+
+4. Ensure that the OpenAI API key has the necessary permissions and rate limits for your expected usage
+
+5. For troubleshooting deployment issues:
+   - Check Vercel logs for any error messages
+   - Verify that environment variables are correctly set
+   - Ensure your OpenAI API key is valid and has sufficient credits
+
 ## 🧩 Project Structure
 
 ```
