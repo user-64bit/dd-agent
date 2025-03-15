@@ -1,4 +1,3 @@
-import { formDataInterface } from "@/utils/types";
 import { AnimatePresence, motion } from "framer-motion";
 import { Download } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
@@ -11,13 +10,11 @@ import BlueprintCommonCard from "./blueprint-common-card";
 export default function BlueprintResultCard({
   isGenerating,
   showResults,
-  formData,
   handleBack,
   setActiveSection,
 }: {
   isGenerating: boolean;
   showResults: boolean;
-  formData: formDataInterface;
   handleBack: () => void;
   setActiveSection: Dispatch<SetStateAction<string>>;
 }) {
@@ -156,7 +153,7 @@ const HelperCard = ({ description }: { description: string }) => {
 const RecommendationsCard = ({
   personal_recommendations,
 }: {
-  personal_recommendations: any;
+  personal_recommendations: string;
 }) => {
   return (
     <Card className="border-primary/20">

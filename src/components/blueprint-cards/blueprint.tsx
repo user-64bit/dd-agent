@@ -110,7 +110,8 @@ export function Blueprint({setActiveSection}: {setActiveSection: Dispatch<SetSta
           const cleanedResponse = response.replace(/```json|```/g, "");
           const parsedResponse = JSON.parse(cleanedResponse);
           localStorage.setItem("blueprintResponse", JSON.stringify(parsedResponse));
-        } catch (parseError) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (_) {
           // If JSON parsing fails, treat it as markdown content
           console.log("Response is not in JSON format, treating as markdown");
           // Create a structured object with markdown content
@@ -166,7 +167,8 @@ export function Blueprint({setActiveSection}: {setActiveSection: Dispatch<SetSta
             const cleanedResponse = response.replace(/```json|```/g, "");
             const parsedResponse = JSON.parse(cleanedResponse);
             localStorage.setItem("blueprintResponse", JSON.stringify(parsedResponse));
-          } catch (parseError) {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          } catch (_) {
             // If JSON parsing fails, treat it as markdown content
             console.log("Response is not in JSON format, treating as markdown");
             // Create a structured object with markdown content
@@ -327,7 +329,6 @@ export function Blueprint({setActiveSection}: {setActiveSection: Dispatch<SetSta
                 <BlueprintResultCard
                   isGenerating={isGenerating}
                   showResults={showResults}
-                  formData={formData}
                   handleBack={handleBack}
                   setActiveSection={setActiveSection}
                 />

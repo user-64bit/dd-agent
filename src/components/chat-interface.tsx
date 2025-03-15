@@ -130,6 +130,8 @@ export function ChatInterface() {
               a: ({ href, children }) => <a href={href} className="text-primary underline">{children}</a>,
               blockquote: ({ children }) => <blockquote className="border-l-4 border-primary/30 pl-4 italic my-2">{children}</blockquote>,
               code: (props) => {
+                // We need to destructure these props for the ReactMarkdown component
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const { children, className, node, ...rest } = props;
                 const match = /language-(\w+)/.exec(className || '');
                 const isInline = !className;

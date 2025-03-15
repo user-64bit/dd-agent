@@ -1,4 +1,4 @@
-import { Activity, Brain, Check, Dumbbell, Heart, Salad, AlertCircle } from "lucide-react";
+import { Activity, Brain, Check, Dumbbell, Heart, AlertCircle } from "lucide-react";
 import { Button } from "../ui/button";
 import BlueprintCommonCard from "./blueprint-common-card";
 import { formDataInterface } from "@/utils/types";
